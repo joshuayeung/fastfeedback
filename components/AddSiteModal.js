@@ -32,11 +32,11 @@ const AddSiteModal = () => {
   const toast = useToast();
   const auth = useAuth();
   const { register, handleSubmit, watch, errors } = useForm();
-  const onSubmit = ({ site, url }) => {
+  const onSubmit = ({ name, url }) => {
     createSite({
       authorId: auth.user.uid,
       createdAt: new Date().toISOString(),
-      site,
+      name,
       url,
     });
     toast({
@@ -65,7 +65,7 @@ const AddSiteModal = () => {
               <Input
                 ref={register({ required: true })}
                 placeholder="My Site"
-                name="site"
+                name="name"
               />
               {errors.site && (
                 <FormErrorMessage>This field is required</FormErrorMessage>

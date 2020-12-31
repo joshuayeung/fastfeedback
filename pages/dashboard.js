@@ -1,19 +1,33 @@
 import DashboardShell from "@/components/DashboardShell";
-import EmptyState from "@/components/SiteEmptyState";
+import SiteEmptyState from "@/components/SiteEmptyState";
+import SiteTable from "@/components/SiteTable";
+import SiteTableSkeleton from "@/components/SiteTableSkeleton";
 import { useAuth } from "@/lib/auth";
-import React from "react";
-import FreePlanEmptyState from "../components/FreePlanEmptyState";
+import fetcher from "@/utils/fetcher";
+import useSWR from "swr";
 
 const Dashboard = () => {
   const auth = useAuth();
 
-  if (!auth.user) {
-    return "Loading...";
-  }
+  const { data, error } = useSWR("/api/sites", fetcher);
+
+  // if (error) return <div>failed to load</div>;
+
+  
+  console.log(data);
+
+  // return <SiteTable sites={data} />
+
+  if (!data)
+    return (
+      <DashboardShell>
+        <SiteTableSkeleton />
+      </DashboardShell>
+    );
 
   return (
     <DashboardShell>
-      <EmptyState />
+      {data.length ? <SiteTable sites={data} /> : <SiteEmptyState />}
     </DashboardShell>
   );
 };
