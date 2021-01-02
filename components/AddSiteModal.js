@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -9,13 +8,9 @@ import {
   ModalCloseButton,
   useDisclosure,
 } from "@chakra-ui/react";
+
 import {
-  Box,
   Button,
-  Flex,
-  Link,
-  Avatar,
-  Icon,
   FormControl,
   FormLabel,
   FormErrorMessage,
@@ -26,19 +21,24 @@ import {
 import { useForm } from "react-hook-form";
 import { createSite } from "@/lib/db";
 import { useAuth } from "@/lib/auth";
+import { mutate } from "swr";
 
-const AddSiteModal = () => {
+const AddSiteModal = ({ children }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const auth = useAuth();
   const { register, handleSubmit, watch, errors } = useForm();
+
   const onSubmit = ({ name, url }) => {
-    createSite({
+    const newSite = {
       authorId: auth.user.uid,
       createdAt: new Date().toISOString(),
       name,
       url,
-    });
+    };
+
+    const { id } = createSite(newSite);
+
     toast({
       title: "Site added.",
       description: "We've added your site for you.",
@@ -46,12 +46,23 @@ const AddSiteModal = () => {
       duration: 9000,
       isClosable: true,
     });
+
+    mutate(
+      "/api/sites",
+      async (data) => {
+        [...data, { ...id, newSite }];
+      },
+      false
+    );
+
     onClose();
   };
 
   return (
     <>
-      <Button onClick={onOpen}>Add Your First Site</Button>
+      <Button colorScheme="blue" variant="solid" onClick={onOpen}>
+        {children}
+      </Button>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -60,7 +71,7 @@ const AddSiteModal = () => {
           <ModalCloseButton />
 
           <ModalBody pb={6}>
-            <FormControl id="site" isRequired>
+            <FormControl id="name" isRequired>
               <FormLabel>Name</FormLabel>
               <Input
                 ref={register({ required: true })}
