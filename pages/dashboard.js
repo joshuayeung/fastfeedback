@@ -11,7 +11,7 @@ import useSWR from "swr";
 const Dashboard = () => {
   const auth = useAuth();
 
-  const { data, error } = useSWR("/api/sites", fetcher);
+  const { data } = useSWR("/api/sites", fetcher);
 
   // if (error) return <div>failed to load</div>;
 
@@ -30,7 +30,7 @@ const Dashboard = () => {
   return (
     <DashboardShell>
       <SiteTableHeader />
-      {data.length ? <SiteTable sites={data} /> : <SiteEmptyState />}
+      {data.sites ? <SiteTable sites={data.sites} /> : <SiteEmptyState />}
       <SiteEmptyState />
     </DashboardShell>
   );
