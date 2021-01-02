@@ -9,9 +9,9 @@ import fetcher from "@/utils/fetcher";
 import useSWR from "swr";
 
 const Dashboard = () => {
-  const auth = useAuth();
+  const { user } = useAuth();
 
-  const { data } = useSWR("/api/sites", fetcher);
+  const { data } = useSWR(user ? ["/api/sites", user.token] : null, fetcher);
 
   // if (error) return <div>failed to load</div>;
 

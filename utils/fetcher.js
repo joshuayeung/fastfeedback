@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const fetcher = async (...args) => {
-  const res = await axios.get(...args);
+const fetcher = async (url, token) => {
+  const res = await axios.get(url, { headers: { token } });
   return res.data;
 };
 
